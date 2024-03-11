@@ -1,18 +1,33 @@
-import { Text, View } from "react-native";
-
-import { useSession } from "../../hooks/useSession";
+import { Text, View, StyleSheet } from "react-native";
+import CardOption from "../../components/CardOption";
+import Logo from "../../components/Logo";
 
 export default function Index() {
-  const { signOut } = useSession();
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text
-        onPress={() => {
-          signOut();
-        }}
-      >
-        Sign Out
-      </Text>
-    </View>
+    <>
+      <View style={styles.upperView}>
+        <Logo bigger />
+      </View>
+      <View style={styles.lowerView}>
+        <CardOption name={"Adicionar Cliente"} />
+        <CardOption name={"Clientes cadastrados"} />
+        <CardOption name={"Tabela IMC"} />
+        <CardOption name={"Meus Dados"} />
+      </View>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  upperView: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  lowerView: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    paddingVertical: 5,
+  },
+});
