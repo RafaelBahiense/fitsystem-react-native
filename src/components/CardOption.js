@@ -1,20 +1,22 @@
 import { Surface, Text } from "react-native-paper";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 
 export default function CardOption(props) {
   const { width } = Dimensions.get("window");
 
   return (
-    <Surface
-      style={{
-        ...styles.surface,
-        width: width / 2 - 10,
-        height: width / 2 - 10,
-      }}
-      elevation={1}
-    >
-      <Text>{props.name}</Text>
-    </Surface>
+    <TouchableOpacity onPress={props.onPress}>
+      <Surface
+        style={{
+          ...styles.surface,
+          width: width / 2 - 10,
+          height: width / 2 - 10,
+        }}
+        elevation={0}
+      >
+        <Text>{props.name}</Text>
+      </Surface>
+    </TouchableOpacity>
   );
 }
 

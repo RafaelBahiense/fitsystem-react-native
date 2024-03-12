@@ -24,10 +24,38 @@ export default function AppLayout() {
         }}
       >
         <Drawer.Screen
-          name="index" // This is the name of the page and must match the url from root
+          name="index"
           options={{
             drawerLabel: "Home",
             title: "Home",
+          }}
+        />
+        <Drawer.Screen
+          name="AddClient"
+          options={{
+            drawerLabel: "Adicionar Cliente",
+            title: "Adicionar Cliente",
+          }}
+        />
+        <Drawer.Screen
+          name="ListClients"
+          options={{
+            drawerLabel: "Listar Clientes",
+            title: "Listar Clientes",
+          }}
+        />
+        <Drawer.Screen
+          name="IMCTable"
+          options={{
+            drawerLabel: "Tabela IMC",
+            title: "Tabela IMC",
+          }}
+        />
+        <Drawer.Screen
+          name="MyInfos"
+          options={{
+            drawerLabel: "Meus Dados",
+            title: "Meus Dados",
           }}
         />
       </Drawer>
