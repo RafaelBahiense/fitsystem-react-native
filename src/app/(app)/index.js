@@ -12,18 +12,22 @@ export default function Index() {
       <View style={styles.lowerView}>
         <CardOption
           name={"Adicionar Cliente"}
+          icon={"plus"}
           onPress={() => router.navigate("/AddClient")}
         />
         <CardOption
           name={"Clientes cadastrados"}
+          icon={"bars"}
           onPress={() => router.navigate("/ListClients")}
         />
         <CardOption
           name={"Tabela IMC"}
+          icon={"table"}
           onPress={() => router.navigate("/IMCTable")}
         />
         <CardOption
           name={"Meus Dados"}
+          icon={"user"}
           onPress={() => router.navigate("/MyInfos")}
         />
       </View>

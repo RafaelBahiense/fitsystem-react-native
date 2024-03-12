@@ -1,5 +1,6 @@
 import { Surface, Text } from "react-native-paper";
 import { StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function CardOption(props) {
   const { width } = Dimensions.get("window");
@@ -14,6 +15,7 @@ export default function CardOption(props) {
         }}
         elevation={0}
       >
+        <AntDesign name={props.icon} size={24} color="black" />
         <Text>{props.name}</Text>
       </Surface>
     </TouchableOpacity>
@@ -22,10 +24,11 @@ export default function CardOption(props) {
 
 const styles = StyleSheet.create({
   surface: {
-    padding: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 18,
     margin: 5,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
     borderRadius: 10,
     backgroundColor: "#fff",
   },
