@@ -1,8 +1,8 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, TextInput, Button, Portal, Modal } from "react-native-paper";
+import { Text, TextInput, Button } from "react-native-paper";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-// import Modal from "../components/Modal";
+import Modal from "../../components/Modal";
 
 export default function AddClient() {
   const [name, setName] = React.useState({ value: "", error: "" });
@@ -68,9 +68,9 @@ export default function AddClient() {
 
   return (
     <View style={styles.container}>
-      <Portal>
-        <Modal />
-      </Portal>
+      <Modal visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
+        <Text>Cliente cadastrado com sucesso!</Text>
+      </Modal>
       <View>
         <TextInput
           style={styles.input}
