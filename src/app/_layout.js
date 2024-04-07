@@ -1,6 +1,7 @@
 import { Slot } from "expo-router";
 import { SessionProvider } from "../contexts/authcontext";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { PaperProvider } from "react-native-paper";
 
 export default function Root() {
   const queryClient = new QueryClient();
@@ -8,7 +9,9 @@ export default function Root() {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <Slot />
+        <PaperProvider>
+          <Slot />
+        </PaperProvider>
       </SessionProvider>
     </QueryClientProvider>
   );

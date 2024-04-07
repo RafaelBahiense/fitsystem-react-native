@@ -29,6 +29,7 @@ export default function ListClients() {
     mutateAsync: deleteClientAsync,
     error: errorDeleteClient,
   } = useMutation({
+    mutationKey: ["clients"],
     mutationFn: async (index) => {
       clients.splice(index, 1);
     },
