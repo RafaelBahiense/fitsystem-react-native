@@ -2,10 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import * as React from "react";
 
 function useAsyncState(initialValue = [true, null]) {
-  return React.useReducer(
-    (state, action = null) => [false, action],
-    initialValue,
-  );
+  return React.useReducer((_, action = null) => [false, action], initialValue);
 }
 
 export async function setStorageItemAsync(key, value) {
