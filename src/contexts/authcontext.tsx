@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { router } from "expo-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { Session } from "@supabase/supabase-js";
 import { supabase } from "../infra/supabase";
 import { detectReason, getReasonMessage } from "@/helpers/ErrorMapper";
 
@@ -16,66 +16,44 @@ async function signIn(credentials: Credentials) {
   return { data, error };
 }
 
-async function signUp(credentials: Credentials) {
-  const { data, error } = await supabase.auth.signUp({
-    email: credentials.email,
-    password: credentials.password,
-  });
-
-  return { data, error };
-}
-
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<string | undefined>();
+  const [session, setSession] = useState<Session | null>();
+
   const queryClient = useQueryClient();
   const useSignIn = useMutation({
     mutationKey: ["auth"],
     mutationFn: signIn,
-    onSuccess: () => {
-      queryClient.invalidateQueries("profile");
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      setSession(data?.data?.session);
     },
   });
-  // const useSignUp = useMutation({
-  //   mutationKey: ["auth"],
-  //   mutationFn: signUp,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries("profile");
-  //   },
-  // });
-  //
-  useEffect(() => {
-    console.log("useSignIn", useSignIn);
-    if (useSignIn.data?.data.session) {
-      setSession(useSignIn.data.data.session?.access_token);
-    }
-  }, [useSignIn]);
 
   return (
     <AuthContext.Provider
       value={{
         signIn: async ({ email, password }) => {
-          const { error } = await useSignIn.mutateAsync({ email, password });
+          const { error } = await useSignIn.mutateAsync({
+            email,
+            password,
+          });
+
           if (error) {
             const reason = detectReason(error);
             const reasonFeedback = getReasonMessage(reason);
             return reasonFeedback;
           }
+
           router.replace("/");
 
           return null;
         },
         signOut: async () => {
           await supabase.auth.signOut();
+          setSession(null);
         },
-        // signUp: async ({ email, password }) => {
-        //   const { error } = await useSignUp.mutateAsync({ email, password });
-        //   if (error) {
-        //     Alert.alert(error.message);
-        //     return;
-        //   }
-        // },
-        useSignInIsLoading: useSignIn.isPending,
-        session: session,
+        session,
+        isPending: useSignIn.isPending,
       }}
     >
       {children}
@@ -87,8 +65,7 @@ type Credentials = { email: string; password: string };
 
 type AuthContextType = {
   signIn: (credentials: Credentials) => Promise<string | null>;
-  /* signUp: (credentials: Credentials) => Promise<string>; */
   signOut: () => Promise<void>;
-  useSignInIsLoading: boolean;
-  session: string | undefined;
+  session?: Session | null;
+  isPending: boolean;
 };

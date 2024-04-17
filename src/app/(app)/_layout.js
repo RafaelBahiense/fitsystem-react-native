@@ -1,7 +1,7 @@
 import { Redirect } from "expo-router";
-import { Text } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { useSession } from "../../hooks/useSession";
-import Singout from "../../components/Signout";
+import SingOut from "../../components/Signout";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -9,7 +9,17 @@ export default function AppLayout() {
   const { session, isLoading } = useSession();
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
 
   if (!session) {
@@ -20,7 +30,7 @@ export default function AppLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
         screenOptions={{
-          headerRight: () => <Singout />,
+          headerRight: () => <SingOut />,
         }}
       >
         <Drawer.Screen
