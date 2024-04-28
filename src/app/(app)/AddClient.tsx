@@ -1,15 +1,36 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, TextInput, Button } from "react-native-paper";
+import { View, ScrollView, StyleSheet, Platform } from "react-native";
+import { Text, Button } from "react-native-paper";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import Modal from "../../components/Modal";
+import TextInput from "../../components/TextInput";
+import Dropdown from "../../components/Dropdown";
+import { supabase } from "../../infra/supabase";
+
+const genderList = [
+  {
+    label: "Masculino",
+    value: "Male",
+  },
+  {
+    label: "Feminino",
+    value: "Female",
+  },
+  {
+    label: "Outro",
+    value: "Other",
+  },
+];
 
 export default function AddClient() {
   const [name, setName] = React.useState({ value: "", error: "" });
   const [age, setAge] = React.useState({ value: "", error: "" });
+  const [gender, setGender] = React.useState({ value: "", error: "" });
   const [phone, setPhone] = React.useState({ value: "", error: "" });
   const [address, setAddress] = React.useState({ value: "", error: "" });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [modalMessage, setModalMessage] = React.useState("");
+  const [showDropDown, setShowDropDown] = React.useState(false);
   const queryClient = useQueryClient();
 
   const numberOnlyFilter = (text) => {
@@ -21,28 +42,25 @@ export default function AddClient() {
   const { mutateAsync: addClientAsync } = useMutation({
     mutationKey: ["clients"],
     mutationFn: async (client) => {
-      return client;
-    },
-    onMutate: () => {
-      const previousClients = queryClient.getQueryData(["client"]);
+      const { error } = await supabase.from("clients").insert([client]);
+      if (error) {
+        setModalMessage("Erro ao cadastrar cliente");
+        setIsModalOpen(true);
+        return false;
+      }
 
-      queryClient.setQueryData(["clients"], (clients) => {
-        return [
-          ...clients,
-          {
-            name: name.value,
-            age: age.value,
-            phone: phone.value,
-            address: address.value,
-          },
-        ];
-      });
+      setModalMessage("Cliente cadastrado com sucesso");
+      setIsModalOpen(true);
 
-      return previousClients;
+      queryClient.invalidateQueries("clients");
+
+      return true;
     },
+    onMutate: () => {},
     onSuccess: () => {
       setName({ value: "", error: "" });
       setAge({ value: "", error: "" });
+      setGender({ value: "", error: "" });
       setPhone({ value: "", error: "" });
       setAddress({ value: "", error: "" });
       setIsModalOpen(true);
@@ -52,24 +70,30 @@ export default function AddClient() {
   const handleAddClient = async () => {
     if (!name.value) setName({ ...name, error: "Nome é obrigatório" });
     if (!age.value) setAge({ ...age, error: "Idade é obrigatório" });
+    if (!gender.value)
+      setGender({ ...gender.value, error: "Gênero é obrigatório" });
     if (!phone.value) setPhone({ ...phone, error: "Telefone é obrigatório" });
     if (!address.value)
       setAddress({ ...address, error: "Endereço é obrigatório" });
 
     if (name.error || age.error || phone.error || address.error) return;
 
+    const { data } = await supabase.auth.getUser();
+
     await addClientAsync({
       name: name.value,
       age: age.value,
+      gender: gender.value,
       phone: phone.value,
       address: address.value,
+      user: data.user.id,
     });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Modal visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
-        <Text>Cliente cadastrado com sucesso!</Text>
+        <Text>{modalMessage}</Text>
       </Modal>
       <View>
         <TextInput
@@ -93,6 +117,17 @@ export default function AddClient() {
           error={!!age.error}
           errorText={age.error}
         />
+        <Dropdown
+          style={{ marginVertical: 20 }}
+          placeholder="Selecione o gênero"
+          label="Gênero"
+          visible={showDropDown}
+          list={genderList}
+          value={gender.value}
+          setValue={(value) => setGender({ value, error: "" })}
+          showDropDown={() => setShowDropDown(true)}
+          onDismiss={() => setShowDropDown(false)}
+        />
         <TextInput
           style={styles.input}
           placeholder="Digite o telefone"
@@ -115,10 +150,15 @@ export default function AddClient() {
           errorText={address.error}
         />
       </View>
-      <Button buttonColor="#444f53" textColor="white" onPress={handleAddClient}>
+      <Button
+        buttonColor="#444f53"
+        textColor="white"
+        onPress={handleAddClient}
+        style={{ marginTop: "auto", marginBottom: 40 }}
+      >
         Cadastrar
       </Button>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -126,10 +166,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    justifyContent: "space-around",
     height: "100%",
   },
   input: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
 });
