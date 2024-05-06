@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import CardOption from "../../components/CardOption";
 import Logo from "../../components/Logo";
 import { router } from "expo-router";
@@ -21,9 +21,9 @@ export default function Index() {
           onPress={() => router.navigate("/ListClients")}
         />
         <CardOption
-          name={"Tabela IMC"}
+          name={"Calculadora IMC"}
           icon={"table"}
-          onPress={() => router.navigate("/IMCTable")}
+          onPress={() => router.navigate("/IMCCalculator/IMCTable")}
         />
         <CardOption
           name={"Meus Dados"}

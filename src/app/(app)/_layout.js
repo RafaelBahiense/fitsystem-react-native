@@ -55,10 +55,10 @@ export default function AppLayout() {
           }}
         />
         <Drawer.Screen
-          name="IMCTable"
+          name="IMCCalculator/IMCTable"
           options={{
-            drawerLabel: "Tabela IMC",
-            title: "Tabela IMC",
+            drawerLabel: "Calculadora IMC",
+            title: "Calculadora IMC",
           }}
         />
         <Drawer.Screen
@@ -66,6 +66,16 @@ export default function AppLayout() {
           options={{
             drawerLabel: "Meus Dados",
             title: "Meus Dados",
+          }}
+        />
+        <Drawer.Screen
+          name="IMCCalculator/SelectClient"
+          options={{
+            drawerLabel: "",
+            title: "Selecionar Cliente",
+            drawerItemStyle: {
+              display: "none",
+            },
           }}
         />
       </Drawer>
