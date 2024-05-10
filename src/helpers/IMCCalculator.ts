@@ -1,5 +1,5 @@
 export function getIMC(height: number, weight: number): number {
-  let result: number = weight / (height * 2);
+  let result: number = weight / (height ** 2);
   result = Math.ceil(result * 100) / 100;
   return result;
 }
