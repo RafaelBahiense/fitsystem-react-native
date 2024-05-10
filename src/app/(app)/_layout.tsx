@@ -1,26 +1,11 @@
 import { Redirect } from "expo-router";
-import { ActivityIndicator, View } from "react-native";
 import { useSession } from "../../hooks/useSession";
 import SingOut from "../../components/Signout";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function AppLayout() {
-  const { session, isLoading } = useSession();
-
-  if (isLoading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  const { session } = useSession();
 
   if (!session) {
     return <Redirect href="/auth" />;

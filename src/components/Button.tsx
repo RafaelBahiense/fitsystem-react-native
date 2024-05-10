@@ -1,9 +1,16 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { Button as PaperButton } from "react-native-paper";
+import { StyleSheet, ActivityIndicator } from "react-native";
+import { Button as PaperButton, ButtonProps } from "react-native-paper";
 import { theme } from "../style/theme";
 
-export default function Button({ mode, style, ...props }) {
+export default function Button({
+  mode,
+  style,
+  isLoading,
+  disabled,
+  children,
+  ...props
+}: ButtonProps & { isLoading?: boolean }) {
   return (
     <PaperButton
       style={[
@@ -13,8 +20,11 @@ export default function Button({ mode, style, ...props }) {
       ]}
       labelStyle={styles.text}
       mode={mode}
+      disabled={isLoading || disabled}
       {...props}
-    />
+    >
+      {isLoading ? <ActivityIndicator color={"white"} /> : children}
+    </PaperButton>
   );
 }
 

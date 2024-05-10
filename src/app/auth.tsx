@@ -27,7 +27,7 @@ const passwordValidator = (password: string) => {
 };
 
 export default function SignIn() {
-  const { signIn } = useSession();
+  const { signIn, isLoading } = useSession();
   const [email, setEmail] = useState({
     value: "",
     error: false,
@@ -129,7 +129,12 @@ export default function SignIn() {
         errorText={password.errorMessage}
         secureTextEntry
       />
-      <Button mode="contained" onPress={onLoginPressed} style={undefined}>
+      <Button
+        mode="contained"
+        onPress={onLoginPressed}
+        style={undefined}
+        isLoading={isLoading}
+      >
         Login
       </Button>
     </Background>

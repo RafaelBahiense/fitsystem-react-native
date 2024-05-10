@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { router } from "expo-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useIsMutating } from "@tanstack/react-query";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../infra/supabase";
 import { detectReason, getReasonMessage } from "@/helpers/ErrorMapper";
@@ -28,6 +28,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setSession(data?.data?.session);
     },
   });
+  const isMutatingAuth = useIsMutating({ mutationKey: ["auth"] });
 
   return (
     <AuthContext.Provider
@@ -53,7 +54,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
           setSession(null);
         },
         session,
-        isPending: useSignIn.isPending,
+        isLoading: isMutatingAuth > 0,
       }}
     >
       {children}
@@ -67,5 +68,5 @@ type AuthContextType = {
   signIn: (credentials: Credentials) => Promise<string | null>;
   signOut: () => Promise<void>;
   session?: Session | null;
-  isPending: boolean;
+  isLoading: boolean;
 };
