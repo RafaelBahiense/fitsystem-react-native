@@ -63,6 +63,26 @@ export default function AppLayout() {
             },
           }}
         />
+        <Drawer.Screen
+          name="IMCCalculator/IMCCalculator"
+          options={{
+            drawerLabel: "",
+            title: "Calculadora",
+            drawerItemStyle: {
+              display: "none",
+            },
+          }}
+        />
+        <Drawer.Screen
+          name="IMCCalculator/IMCResult"
+          options={{
+            drawerLabel: "",
+            title: "Resultado IMC",
+            drawerItemStyle: {
+              display: "none",
+            },
+          }}
+        />
       </Drawer>
     </GestureHandlerRootView>
   );

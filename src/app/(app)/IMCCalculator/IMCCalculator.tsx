@@ -1,13 +1,14 @@
 import * as React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
 import Modal from "@/components/Modal";
 import TextInput from "@/components/TextInput";
 import Dropdown from "@/components/Dropdown";
 import { supabase } from "@/infra/supabase";
 import { useGetClient } from "@/hooks/useGetClient";
+import { useEffect } from "react";
 
 const genderList = [
   {
@@ -31,6 +32,11 @@ export default function IMCCalculator() {
   const [modalMessage, setModalMessage] = React.useState("");
   const [showDropDown, _] = React.useState(false);
   const { clientId } = useLocalSearchParams();
+
+  useEffect(() => {
+    setHeight({ value: "", error: "" });
+    setWeight({ value: "", error: "" });
+  }, [clientId]);
 
   const numberOnlyFilter = (
     text: string,

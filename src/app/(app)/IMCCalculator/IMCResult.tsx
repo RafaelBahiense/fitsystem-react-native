@@ -1,9 +1,10 @@
 import * as React from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 import Modal from "@/components/Modal";
 import { useGetClient } from "@/hooks/useGetClient";
+import CardOption from "@/components/CardOption";
 import { getIMC, getIMCClassification } from "@/helpers/IMCCalculator";
 
 export default function IMCResult() {
@@ -25,16 +26,21 @@ export default function IMCResult() {
   if (isLoadingClient) return <Text>Carregando...</Text>;
 
   return (
-    <View>
+    <View style={styles.container}>
       <Modal visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
         <Text>{modalMessage}</Text>
       </Modal>
       <View>
-        <Text>Cliente: {client.name}</Text>
-        <Text>Altura: {height}</Text>
-        <Text>Peso: {weight}</Text>
-        <Text>IMC: {imc}</Text>
-        <Text>Classificação: {classification}</Text>
+        <Text style={styles.clientName}>Cliente: {client.name}</Text>
+        <View style={styles.cards}>
+          <CardOption name={"Altura: " + height} icon={"totop"} />
+          <CardOption name={"Peso: " + weight} icon={"download"} />
+          <CardOption name={"IMC: " + imc} icon={"form"} />
+          <CardOption
+            name={"Classificação: " + classification}
+            icon={"table"}
+          />
+        </View>
       </View>
       <View>
         <Button
@@ -49,3 +55,23 @@ export default function IMCResult() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cards: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    paddingVertical: 5,
+  },
+  clientName: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 60,
+    textAlign: "center",
+  },
+});
