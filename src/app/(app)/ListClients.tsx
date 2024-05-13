@@ -7,7 +7,7 @@ import { supabase } from "../../infra/supabase";
 import CustomModal from "@/components/Modal";
 
 export default function ListClients() {
-  const [isVisibleModal, setVisibleModal] = React.useState(false);
+  const [isVisibleModal, setIsVisibleModal] = React.useState(false);
   const [modalMessage, setModalMessage] = React.useState("");
 
   const queryClient = useQueryClient();
@@ -21,7 +21,7 @@ export default function ListClients() {
 
       if (error) {
         setModalMessage("Erro ao buscar clientes");
-        setVisibleModal(true);
+        setIsVisibleModal(true);
       }
 
       return data;
@@ -31,7 +31,7 @@ export default function ListClients() {
   const { isPending: isPendingDeleteClient, mutateAsync: deleteClientAsync } =
     useMutation({
       mutationKey: ["clients"],
-      mutationFn: async (id) => {
+      mutationFn: async (id: number) => {
         console.log("id", id);
         const { error } = await supabase.from("clients").delete().match({ id });
         console.log("error", error);
@@ -44,7 +44,7 @@ export default function ListClients() {
           setModalMessage("Cliente deletado com sucesso");
         }
 
-        setVisibleModal(true);
+        setIsVisibleModal(true);
       },
     });
 
@@ -52,7 +52,10 @@ export default function ListClients() {
 
   return (
     <>
-      <CustomModal isVisible={isVisibleModal}>
+      <CustomModal
+        visible={isVisibleModal}
+        onDismiss={() => setIsVisibleModal(false)}
+      >
         <Text>{modalMessage}</Text>
       </CustomModal>
       <ScrollView>
@@ -62,6 +65,7 @@ export default function ListClients() {
             index={c.id}
             key={c.id}
             deleteFunc={deleteClientAsync}
+            visualizeFunc={() => {}}
           />
         ))}
       </ScrollView>

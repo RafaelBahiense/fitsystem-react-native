@@ -1,26 +1,14 @@
 import * as React from "react";
-import { View, ScrollView, StyleSheet, Platform } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import Modal from "../../components/Modal";
-import TextInput from "../../components/TextInput";
-import Dropdown from "../../components/Dropdown";
-import { supabase } from "../../infra/supabase";
-
-const genderList = [
-  {
-    label: "Masculino",
-    value: "Male",
-  },
-  {
-    label: "Feminino",
-    value: "Female",
-  },
-  {
-    label: "Outro",
-    value: "Other",
-  },
-];
+import { useQueryClient } from "@tanstack/react-query";
+import Modal from "@/components/Modal";
+import TextInput from "@/components/TextInput";
+import GenderDropdown from "@/components/GenderDropdown";
+import { numberOnlyFilter } from "@/helpers/NumberOnlyFilter";
+import { supabase } from "@/infra/supabase";
+import { useAddClient } from "@/hooks/useAddClient";
+import { Gender } from "@/entities/Gender";
 
 export default function AddClient() {
   const [name, setName] = React.useState({ value: "", error: "" });
@@ -33,45 +21,29 @@ export default function AddClient() {
   const [showDropDown, setShowDropDown] = React.useState(false);
   const queryClient = useQueryClient();
 
-  const numberOnlyFilter = (text) => {
-    const numericValue = text.replace(/[^0-9]/g, "");
-    if (numericValue.length > 3) return;
-    setAge({ value: numericValue, error: "" });
-  };
-
-  const { mutateAsync: addClientAsync } = useMutation({
-    mutationKey: ["clients"],
-    mutationFn: async (client) => {
-      const { error } = await supabase.from("clients").insert([client]);
-      if (error) {
-        setModalMessage("Erro ao cadastrar cliente");
-        setIsModalOpen(true);
-        return false;
-      }
-
-      setModalMessage("Cliente cadastrado com sucesso");
+  const { mutateAsync: addClientAsync } = useAddClient({
+    onError: () => {
+      setModalMessage("Erro ao cadastrar cliente");
       setIsModalOpen(true);
-
-      queryClient.invalidateQueries("clients");
-
-      return true;
     },
-    onMutate: () => {},
     onSuccess: () => {
       setName({ value: "", error: "" });
       setAge({ value: "", error: "" });
       setGender({ value: "", error: "" });
       setPhone({ value: "", error: "" });
       setAddress({ value: "", error: "" });
+
+      setModalMessage("Cliente cadastrado com sucesso");
       setIsModalOpen(true);
+
+      queryClient.invalidateQueries("clients");
     },
   });
 
   const handleAddClient = async () => {
     if (!name.value) setName({ ...name, error: "Nome é obrigatório" });
     if (!age.value) setAge({ ...age, error: "Idade é obrigatório" });
-    if (!gender.value)
-      setGender({ ...gender.value, error: "Gênero é obrigatório" });
+    if (!gender.value) setGender({ ...gender, error: "Gênero é obrigatório" });
     if (!phone.value) setPhone({ ...phone, error: "Telefone é obrigatório" });
     if (!address.value)
       setAddress({ ...address, error: "Endereço é obrigatório" });
@@ -80,10 +52,16 @@ export default function AddClient() {
 
     const { data } = await supabase.auth.getUser();
 
+    if (!data || !data.user) {
+      setModalMessage("Erro ao cadastrar cliente");
+      setIsModalOpen(true);
+      return;
+    }
+
     await addClientAsync({
       name: name.value,
-      age: age.value,
-      gender: gender.value,
+      age: Number(age.value),
+      gender: Gender.parse(gender.value),
       phone: phone.value,
       address: address.value,
       user: data.user.id,
@@ -91,7 +69,10 @@ export default function AddClient() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <Modal visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
         <Text>{modalMessage}</Text>
       </Modal>
@@ -100,9 +81,10 @@ export default function AddClient() {
           style={styles.input}
           placeholder="Digite o nome"
           label="Nome"
+          description={null}
           returnKeyType="next"
           value={name.value}
-          onChangeText={(text) => setName({ value: text, error: "" })}
+          onChangeText={(text: string) => setName({ value: text, error: "" })}
           error={!!name.error}
           errorText={name.error}
         />
@@ -110,19 +92,17 @@ export default function AddClient() {
           style={styles.input}
           placeholder="Digite a idade"
           label="Idade"
+          description={null}
           returnKeyType="next"
           keyboardType="numeric"
           value={age.value}
-          onChangeText={numberOnlyFilter}
+          onChangeText={(text: string) => numberOnlyFilter(text, setAge)}
           error={!!age.error}
           errorText={age.error}
         />
-        <Dropdown
-          style={{ marginVertical: 20 }}
-          placeholder="Selecione o gênero"
-          label="Gênero"
+        <GenderDropdown
+          style={{ marginBottom: 20, marginTop: 10 }}
           visible={showDropDown}
-          list={genderList}
           value={gender.value}
           setValue={(value) => setGender({ value, error: "" })}
           showDropDown={() => setShowDropDown(true)}
@@ -132,39 +112,44 @@ export default function AddClient() {
           style={styles.input}
           placeholder="Digite o telefone"
           label="Telefone"
+          description={null}
           returnKeyType="next"
           keyboardType="numeric"
           value={phone.value}
-          onChangeText={(text) => setPhone({ value: text, error: "" })}
+          onChangeText={(text: string) => setPhone({ value: text, error: "" })}
           error={!!phone.error}
           errorText={phone.error}
         />
         <TextInput
           style={styles.input}
-          placeholder="Digite o endereco"
-          label="Endereco"
+          placeholder="Digite o endereço"
+          label="Endereço"
+          description={null}
           returnKeyType="next"
           value={address.value}
-          onChangeText={(text) => setAddress({ value: text, error: "" })}
+          onChangeText={(text: string) =>
+            setAddress({ value: text, error: "" })
+          }
           error={!!address.error}
           errorText={address.error}
         />
       </View>
-      <Button
-        buttonColor="#444f53"
-        textColor="white"
-        onPress={handleAddClient}
-        style={{ marginTop: "auto", marginBottom: 40 }}
-      >
-        Cadastrar
-      </Button>
+      <View style={{ flex: 1 }}>
+        <Button
+          buttonColor="#444f53"
+          textColor="white"
+          onPress={handleAddClient}
+          style={{ marginTop: "auto", marginBottom: 40 }}
+        >
+          Cadastrar
+        </Button>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 10,
     height: "100%",
   },

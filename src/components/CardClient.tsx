@@ -9,14 +9,14 @@ export default function CardClient(props: Props) {
         <AntDesign name={"user"} size={24} color="black" />
         <Text>{props.name}</Text>
         <View style={{ justifyContent: "space-around" }}>
-          {props.editFunc ? (
+          {props.visualizeFunc ? (
             <View style={{ paddingBottom: 10 }}>
               <Button
                 buttonColor="#444f53"
                 textColor="white"
-                onPress={() => props.deleteFunc(props.index)}
+                onPress={() => props.visualizeFunc(props.index)}
               >
-                Editar
+                Ver
               </Button>
             </View>
           ) : null}
@@ -51,11 +51,11 @@ export default function CardClient(props: Props) {
 const styles = StyleSheet.create({
   surface: {
     minHeight: 120,
-    paddingHorizontal: 8,
+    paddingHorizontal: 20,
     paddingVertical: 5,
     margin: 5,
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     borderRadius: 10,
     backgroundColor: "#fff",
     flexDirection: "row",
@@ -66,6 +66,6 @@ type Props = {
   name: string;
   index: number;
   deleteFunc?: (id: number) => void;
-  editFunc?: (id: number) => void;
+  visualizeFunc?: (id: number) => void;
   selectFunc?: (id: number) => void;
 };

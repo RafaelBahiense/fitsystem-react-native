@@ -83,6 +83,16 @@ export default function AppLayout() {
             },
           }}
         />
+        <Drawer.Screen
+          name="VisualizeClient"
+          options={{
+            drawerLabel: "",
+            title: "Visualizar Cliente",
+            drawerItemStyle: {
+              display: "none",
+            },
+          }}
+        />
       </Drawer>
     </GestureHandlerRootView>
   );

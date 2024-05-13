@@ -2,9 +2,9 @@ import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { supabase } from "@/infra/supabase";
 import { PostgrestError } from "@supabase/supabase-js";
 
-export function useGetClient(props: useGetClientProps) {
+export function useGetClientHealthMetrics(props: useAddClientProps) {
   const query = useQuery({
-    queryKey: ["client", props.clientId],
+    queryKey: ["client_health_metrics", props.clientId],
     queryFn: queryFn.bind(null, props.clientId),
     enabled: !!props.clientId,
     ...props,
@@ -15,10 +15,9 @@ export function useGetClient(props: useGetClientProps) {
 
 async function queryFn(clientId: number) {
   const { data, error } = await supabase
-    .from("clients")
-    .select("id, name, age, gender, address, created_at")
-    .eq("id", clientId)
-    .single();
+    .from("client_health_metrics")
+    .select("id, height, weight, created_at")
+    .eq("client_id", clientId);
 
   if (error) {
     throw error;
@@ -27,12 +26,12 @@ async function queryFn(clientId: number) {
   return data;
 }
 
-type useGetClientProps = Omit<
+type useAddClientProps = Omit<
   UseQueryOptions<
     Awaited<ReturnType<typeof queryFn>>,
     PostgrestError,
     Awaited<ReturnType<typeof queryFn>>,
-    ("client" | number)[]
+    ("client_health_metrics" | number)[]
   >,
   "queryFn" | "queryKey" | "enabled"
 > & { clientId: number };

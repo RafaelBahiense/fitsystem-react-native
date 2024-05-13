@@ -5,32 +5,17 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
 import Modal from "@/components/Modal";
 import TextInput from "@/components/TextInput";
-import Dropdown from "@/components/Dropdown";
+import GenderDropdown from "@/components/GenderDropdown";
+import { numberOnlyFilter } from "@/helpers/NumberOnlyFilter";
 import { supabase } from "@/infra/supabase";
 import { useGetClient } from "@/hooks/useGetClient";
 import { useEffect } from "react";
-
-const genderList = [
-  {
-    label: "Masculino",
-    value: "Male",
-  },
-  {
-    label: "Feminino",
-    value: "Female",
-  },
-  {
-    label: "Outro",
-    value: "Other",
-  },
-];
 
 export default function IMCCalculator() {
   const [height, setHeight] = React.useState({ value: "", error: "" });
   const [weight, setWeight] = React.useState({ value: "", error: "" });
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [modalMessage, setModalMessage] = React.useState("");
-  const [showDropDown, _] = React.useState(false);
   const { clientId } = useLocalSearchParams();
 
   useEffect(() => {
@@ -38,25 +23,20 @@ export default function IMCCalculator() {
     setWeight({ value: "", error: "" });
   }, [clientId]);
 
-  const numberOnlyFilter = (
-    text: string,
-    setValue: React.Dispatch<{ value: string; error: string }>,
-  ) => {
-    const numericValue = text.replace(/[^0-9.]/g, "");
+  const {
+    isLoading: isLoadingClient,
+    data: client,
+    error,
+  } = useGetClient({
+    clientId: Number(clientId),
+  });
 
-    if (numericValue.split(".").length > 2) return;
-    if (numericValue.length > 4) return;
-
-    setValue({ value: numericValue, error: "" });
-  };
-
-  const { isLoading: isLoadingClient, data: client } = useGetClient({
-    clientId: clientId as string,
-    errorFunc: () => {
+  useEffect(() => {
+    if (error) {
       setModalMessage("Erro ao buscar cliente");
       setIsModalOpen(true);
-    },
-  });
+    }
+  }, [error]);
 
   const { mutateAsync: addClientHealthMetricsAsync } = useMutation({
     mutationKey: ["clients-health-metrics"],
@@ -127,12 +107,9 @@ export default function IMCCalculator() {
           errorText={null}
           disabled
         />
-        <Dropdown
+        <GenderDropdown
           style={{ marginVertical: 20 }}
-          placeholder="...Carregando"
-          label="Gênero"
-          visible={showDropDown}
-          list={genderList}
+          visible={false}
           value={client.gender}
           setValue={() => {}}
           showDropDown={() => {}}

@@ -31,7 +31,7 @@ export default function IMCResult() {
         <Text>{modalMessage}</Text>
       </Modal>
       <View>
-        <Text style={styles.clientName}>Cliente: {client.name}</Text>
+        <Text style={styles.clientName}>{client.name}</Text>
         <View style={styles.cards}>
           <CardOption name={"Altura: " + height} icon={"totop"} />
           <CardOption name={"Peso: " + weight} icon={"download"} />
