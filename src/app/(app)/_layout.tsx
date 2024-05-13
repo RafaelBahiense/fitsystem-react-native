@@ -93,6 +93,16 @@ export default function AppLayout() {
             },
           }}
         />
+        <Drawer.Screen
+          name="VisualizeClientHealthMetrics"
+          options={{
+            drawerLabel: "",
+            title: "Métricas de Saúde",
+            drawerItemStyle: {
+              display: "none",
+            },
+          }}
+        />
       </Drawer>
     </GestureHandlerRootView>
   );

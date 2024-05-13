@@ -1,9 +1,10 @@
 import * as React from "react";
 import { ScrollView } from "react-native";
 import { Text } from "react-native-paper";
-import CardClient from "../../components/CardClient";
+import CardClient from "@/components/CardClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "../../infra/supabase";
+import { router } from "expo-router";
+import { supabase } from "@/infra/supabase";
 import CustomModal from "@/components/Modal";
 
 export default function ListClients() {
@@ -15,9 +16,7 @@ export default function ListClients() {
   const { isLoading: isLoadingClient, data: clients } = useQuery({
     queryKey: ["clients"],
     queryFn: async () => {
-      const { data, error, status } = await supabase
-        .from("clients")
-        .select(`*`);
+      const { data, error } = await supabase.from("clients").select(`*`);
 
       if (error) {
         setModalMessage("Erro ao buscar clientes");
@@ -65,7 +64,14 @@ export default function ListClients() {
             index={c.id}
             key={c.id}
             deleteFunc={deleteClientAsync}
-            visualizeFunc={() => {}}
+            visualizeFunc={() =>
+              router.navigate({
+                pathname: "/VisualizeClient",
+                params: {
+                  clientId: c.id,
+                },
+              })
+            }
           />
         ))}
       </ScrollView>

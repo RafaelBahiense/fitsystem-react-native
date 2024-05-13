@@ -132,7 +132,7 @@ export default function SignIn() {
       <Button
         mode="contained"
         onPress={onLoginPressed}
-        style={undefined}
+        style={{ marginTop: 40 }}
         isLoading={isLoading}
       >
         Login

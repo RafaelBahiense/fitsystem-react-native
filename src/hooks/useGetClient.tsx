@@ -16,7 +16,7 @@ export function useGetClient(props: useGetClientProps) {
 async function queryFn(clientId: number) {
   const { data, error } = await supabase
     .from("clients")
-    .select("id, name, age, gender, address, created_at")
+    .select("id, name, age, phone, gender, address, created_at")
     .eq("id", clientId)
     .single();
 

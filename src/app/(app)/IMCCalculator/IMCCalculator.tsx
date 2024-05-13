@@ -81,7 +81,10 @@ export default function IMCCalculator() {
   if (isLoadingClient) return <Text>Carregando...</Text>;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       <Modal visible={isModalOpen} onDismiss={() => setIsModalOpen(false)}>
         <Text>{modalMessage}</Text>
       </Modal>
@@ -143,21 +146,22 @@ export default function IMCCalculator() {
           errorText={weight.error}
         />
       </View>
-      <Button
-        buttonColor="#444f53"
-        textColor="white"
-        onPress={handleAddClientHelthMetrics}
-        style={{ marginTop: "auto", marginBottom: 40 }}
-      >
-        Cadastrar
-      </Button>
+      <View style={{ flex: 1 }}>
+        <Button
+          buttonColor="#444f53"
+          textColor="white"
+          onPress={handleAddClientHelthMetrics}
+          style={{ marginTop: "auto", marginBottom: 40 }}
+        >
+          Cadastrar
+        </Button>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 10,
     height: "100%",
   },

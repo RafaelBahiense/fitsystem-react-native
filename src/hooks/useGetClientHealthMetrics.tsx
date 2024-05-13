@@ -17,7 +17,8 @@ async function queryFn(clientId: number) {
   const { data, error } = await supabase
     .from("client_health_metrics")
     .select("id, height, weight, created_at")
-    .eq("client_id", clientId);
+    .eq("client_id", clientId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw error;

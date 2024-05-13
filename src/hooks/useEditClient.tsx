@@ -13,7 +13,9 @@ export function useEditClient(props: useEditClientProps) {
 }
 
 async function mutationFn(client: Client) {
-  const { error } = await supabase.from("clients").update([client]);
+  const { error } = await supabase.from("clients").update([client]).match({
+    id: client.id,
+  });
   if (error) {
     throw error;
   }
